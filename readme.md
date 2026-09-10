@@ -1,4 +1,6 @@
 # How to install Jenkins on a Docker container
+### Build the Docker file 
+docker build -t myjenkins-blueocean:2.568.3-1 .
 
 ### Create a network for Jenkins 
 
@@ -19,5 +21,4 @@ docker run \
   --publish 50000:50000 \
   --volume jenkins-data:/var/jenkins_home \
   --volume jenkins-docker-certs:/certs/client:ro \
-  myjenkins-blueocean:2.568.3-1
-
+  myjenkins-blueocean:2.568.3-1 

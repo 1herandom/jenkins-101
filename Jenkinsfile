@@ -1,17 +1,22 @@
 pipeline {
-    agent { 
+      agent { 
         node {
-            label 'docker-agent-python'
+            label 'docker_python'
             }
       }
-    triggers {
-        pollSCM '* * * * *'
-    }
+    environment {
+        git_url = 'https://github.com/1herandom/jenkins-101'
+      }
+    // triggers {
+    //     pollSCM '* * * * *'
+    // }
     stages {
         stage('Build') {
             steps {
                 echo "Building.."
                 sh '''
+                git clone $git_url
+                cd jenkins-101
                 cd myapp
                 pip install -r requirements.txt
                 '''
