@@ -1,13 +1,24 @@
 from flask import Flask, jsonify
 import signal
 import sys
+import socket
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def home():
-    return "<h1>Hello from myapp!</h1><p>Running and serving traffic.</p>"
+    hostname = socket.gethostname()
+    return f"""
+    <html>
+      <head><title>myapp</title></head>
+      <body style="font-family: sans-serif; padding: 40px;">
+        <h1>Hello from myapp!</h1>
+        <p>Running in container: <code>{hostname}</code></p>
+        <p>Status: <span style="color: green;">healthy</span></p>
+      </body>
+    </html>
+    """
 
 
 @app.route("/health")
@@ -16,7 +27,7 @@ def health():
 
 
 def shutdown(signum, frame):
-    print("SIGTERM received, shutting down...", flush=True)
+    print("SIGTERM received, shutting down gracefully...", flush=True)
     sys.exit(0)
 
 

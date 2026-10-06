@@ -1,7 +1,11 @@
 FROM python:3.10-slim
-WORKDIR /usr/local/app
+WORKDIR /myapp
 COPY requirements.txt ./
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
-CMD ["python3", "hello.py"]
+
+EXPOSE 8000
+
+CMD ["python", "hello.py"]
 

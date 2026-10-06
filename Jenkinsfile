@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         APP_NAME = "myapp"
+        myurl = "https://github.com/1herandom/jenkins-101/tree/main"
     }
 
     stages {
@@ -30,6 +31,7 @@ pipeline {
                             TARGET=8000
                         fi
                     fi
+                    git clone ${myurl}
                     cd /jenkins-101/myapp 
                     docker build -t ${APP_NAME}:build-${BUILD_NUMBER} .
                     docker run -d \
