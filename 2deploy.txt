@@ -12,10 +12,10 @@ pipeline {
                 sh '''
                     set -e
 
-                    RUNNING=$(docker ps --filter "name=${APP_NAME}-" --filter "status=running" -q)
+                    running=$(docker ps --filter "name=${app_name}-" --filter "status=running" -q)
 
-                    if [ -z "$RUNNING" ]; then
-                        TARGET=8000
+                    if [ -z "$running" ]; then
+                        target=8000
                     else
                         if curl -sf http://localhost:8000/health > /dev/null; then
                             docker rm -f ${APP_NAME}-8001 2>/dev/null || true
