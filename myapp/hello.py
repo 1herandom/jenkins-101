@@ -1,8 +1,27 @@
-import fire
+from flask import Flask, jsonify
+import signal
+import sys
 
-def hello(name="World"):
-    while True:
-        print("Hello %s!" % name)
+app = Flask(__name__)
 
-if __name__ == '__main__':
-    fire.Fire(hello)
+
+@app.route("/")
+def home():
+    return "<h1>Hello from myapp!</h1><p>Running and serving traffic.</p>"
+
+
+@app.route("/health")
+def health():
+    return jsonify(status="ok"), 200
+
+
+def shutdown(signum, frame):
+    print("SIGTERM received, shutting down...", flush=True)
+    sys.exit(0)
+
+
+signal.signal(signal.SIGTERM, shutdown)
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
