@@ -13,7 +13,7 @@ def home():
     <html>
       <head><title>myapp</title></head>
       <body style="font-family: sans-serif; padding: 40px;">
-        <h1>Hello from myapp!</h1>
+        <h1>Hello from newapp!</h1>
         <p>Running in container: <code>{hostname}</code></p>
         <p>Status: <span style="color: green;">healthy</span></p>
       </body>
