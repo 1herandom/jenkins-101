@@ -16,6 +16,8 @@ pipeline {
 
                     TAG=$(cat ${WORKING_BUILD})
 
+                    docker rm -f $(docker ps -aq)
+
                     echo "TAG=$TAG"
 
                     docker rm -f ${APP_NAME}-${WORKINGPORT} 2>/dev/null || true
@@ -25,7 +27,11 @@ pipeline {
                     -p ${WORKINGPORT}:8000 \
                     ${APP_NAME}:build-$TAG
 
-                    echo "8000" > "$PORT_STOR"
+                    echo "upstream app_backend { server 127.0.0.1:${WORKINGPORT}; keepalive 32; }" > /etc/nginx/upstreams/app_backend.conf
+                    nginx -t
+                    echo "qwe" | sudo nginx -s reload
+                    echo ${WORKINGPORT} > ${PORT_STOR}
+
 
                     docker ps --filter "name=^myapp-test$"
                 '''
