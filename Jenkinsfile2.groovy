@@ -1,25 +1,35 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMG = "/opt/dockerimg/"
+        APP_NAME   = "myapp"
+        DOCKER_IMG = "/opt/dockerimg"
         PORT_STOR  = "/opt/cicd/current-port.txt"
-      }
+        TAG_FILE   = "/opt/cicd/build-info.txt"
+        WORKING_BUILD = "/opt/cicd/working_build_info.txt"
+        WORKINGPORT = "8000"
+    }
     stages {
         stage('select') {
-        steps {
-          sh '''
-           KEEP=$(ls -t /opt/dockerimg/*.tar | sed -n '2p')
-           cd "${DOCKER_IMG}"
-           docker load -i $KEEP
-           docker rm -f $(docker ps -aq --filter "name=myapp")
-           docker run -d \
-            --name myapp-test \
-            -p 9000:8000 \
-            myapp:build-41
-            
-           echo "8000" > "${PORT_STOR}"
-           
-           '''
+            steps {
+                sh '''
+                    set -e
+
+                    TAG=$(cat ${WORKING_BUILD})
+
+                    echo "TAG=$TAG"
+
+                    docker rm -f ${APP_NAME}-${WORKINGPORT} 2>/dev/null || true
+                    docker run -d \
+                    --name ${APP_NAME}-${WORKINGPORT} \
+                    --restart unless-stopped \
+                    -p ${WORKINGPORT}:8000 \
+                    ${APP_NAME}:build-$TAG
+
+                    echo "8000" > "$PORT_STOR"
+
+                    docker ps --filter "name=^myapp-test$"
+                '''
+            }
         }
-      }
-  }
+    }
+}

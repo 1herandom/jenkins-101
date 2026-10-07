@@ -6,6 +6,7 @@ pipeline {
         REPO_URL   = "https://github.com/1herandom/jenkins-101.git"
         PORT_STOR  = "/opt/cicd/current-port.txt"
         BUILD_INFO = "/opt/cicd/build-info.txt"
+        WORKING_BUILD = "/opt/cicd/working_build_info.txt"
         HRALTH     = "/health"
     }
 
@@ -38,8 +39,6 @@ pipeline {
 
                 cd jenkins-101/myapp
                 docker build -t ${APP_NAME}:build-${BUILD_NUMBER} .
-                docker save -o /opt/dockerimg/${APP_NAME}-${BUILD_NUMBER}.tar ${APP_NAME}:build-${BUILD_NUMBER}
-                echo $BUILD_NUMBER > ${BUILD_INFO}
 
                 docker rm -f ${APP_NAME}-${WORKINGPORT} 2>/dev/null || true
                 docker run -d \
@@ -73,7 +72,7 @@ pipeline {
                 if [ "$CHECK" = "200" ]; then
                     echo "upstream app_backend { server 127.0.0.1:${WORKINGPORT}; keepalive 32; }" > /etc/nginx/upstreams/app_backend.conf
                     nginx -t
-                    nginx -s reload
+                    echo "qwe" | sudo nginx -s reload
                     echo ${WORKINGPORT} > ${PORT_STOR}
                     docker rm -f ${APP_NAME}-${OLDPORT} 2>/dev/null || true
                 else
@@ -101,6 +100,11 @@ pipeline {
         else
             echo "PORT_STOR is empty — skipping cleanup to avoid removing the live container"
         fi
+        
+        echo $(cat ${BUILD_INFO})> ${WORKING_BUILD}
+        
+        echo $BUILD_NUMBER > ${BUILD_INFO}
+
         '''
     }
   }
